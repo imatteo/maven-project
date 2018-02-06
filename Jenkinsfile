@@ -49,34 +49,24 @@ pipeline {
             }
         }
 
-        stage ('Deployments') {
-            parallel { // it tells Jenkins that it is possible to run the two following stages at the same time.
+       stage ('Deploy to Staging') {
+            steps {
+                sh "sshpass -p 'tibco123' scp -o StrictHostKeyChecking=no **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-staging/webapps"
+                // AWS example:
+                // sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+            }
+            post {
+                success {
+                    echo 'Code deployed to Dev.'
 
-                stage ('Deploy to Staging') {
-                    steps {
-                        sh "sshpass -p 'tibco123' scp -o StrictHostKeyChecking=no **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-staging/webapps"
-                        // AWS example:
-                        // sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
-                    }
-                    post {
-                        success {
-                            echo 'Code deployed to Dev.'
-                        }
-
-                        failure {
-                            echo ' Deployment failed.'
-                        }
-                    }
+                    build job: 'static-analysis'
                 }
 
-                stage ('StaticAnalysis') {
-                    steps {
-                        sh 'mvn checkstyle:checkstyle'
-                    }
-                } 
-                
-            } 
-        } 
+                failure {
+                    echo ' Deployment failed.'
+                }
+            }
+        }
 
         stage ("Deploy to Production") {
             steps {
