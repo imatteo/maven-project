@@ -1,9 +1,22 @@
 pipeline {
     agent any // use any jenkins host available
 
+    tools { 
+        /*
+         * we’ll add in this Pipeline a tools section to let us use Maven.
+         * Each tool entry will make whatever settings changes, such as updating PATH or other environment variables, 
+         * to make the named tool available in the current pipeline. 
+         * It will also automatically install the named tool if that tool is configured to do so under "Managing Jenkins" → "Global Tool Configuration".
+        **/
+        maven 'Maven 3.5.2' 
+        jdk 'jdk8' 
+    }
+
     parameters { // parameters directive
-        // we define two variables containing the IP address of the two tomcat instances.
-        // Best practice is to use parameters instead of hardcoded values in our scripts.
+        /* 
+         * we define two variables containing the IP address of the two tomcat instances.
+         * Best practice is to use parameters instead of hardcoded values in our scripts.
+        **/
         string(name: 'tomcat_dev', defaultValue: 'localhost', description: 'Staging Server')
         string(name: 'tomcat_prod', defaultValue: 'localhost', description: 'Production Server')
     } 
@@ -14,6 +27,15 @@ pipeline {
     } 
 
     stages {
+
+        stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                ''' 
+            }
+        }
 
         stage('Build') {
             steps {
