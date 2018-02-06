@@ -8,8 +8,8 @@ pipeline {
          * to make the named tool available in the current pipeline. 
          * It will also automatically install the named tool if that tool is configured to do so under "Managing Jenkins" → "Global Tool Configuration".
         **/
-        maven 'localMaven' 
-        jdk 'localJDK' 
+        maven 'localMaven'
+        jdk 'localJDK'
     }
 
     parameters { // parameters directive
@@ -54,7 +54,7 @@ pipeline {
 
                 stage ('Deploy to Staging') {
                     steps {
-                        sh "sshpass -p 'tibco123' scp **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-staging/webapps"
+                        sh "sshpass -p 'tibco123' scp -o StrictHostKeyChecking=no **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-staging/webapps"
                         // AWS example:
                         // sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
                     }
@@ -83,7 +83,7 @@ pipeline {
                 timeout(time:5, unit:'DAYS'){ // sets a timeout period for the Pipeline run, after which Jenkins should abort the Pipeline (5 days in this case).
                     input message:'Approve PRODUCTION Deployment?'
                 }
-                sh "sshpass -p 'tibco123' scp **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-production/webapps"
+                sh "sshpass -p 'tibco123' scp -o StrictHostKeyChecking=no **/target/*.war catenate@${params.tomcat_dev}:/opt/tomcat/apache-tomcat-9.0.4-production/webapps"
             }
             post {
                 success {
