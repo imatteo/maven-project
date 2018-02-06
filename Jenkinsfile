@@ -8,8 +8,8 @@ pipeline {
          * to make the named tool available in the current pipeline. 
          * It will also automatically install the named tool if that tool is configured to do so under "Managing Jenkins" → "Global Tool Configuration".
         **/
-        maven 'Maven 3.5.2' 
-        jdk 'jdk8' 
+        maven 'localMaven' 
+        jdk 'localJDK' 
     }
 
     parameters { // parameters directive
