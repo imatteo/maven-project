@@ -48,7 +48,9 @@ pipeline {
                 }
 
                 stage ('StaticAnalysis') {
-                    sh 'mvn checkstyle:checkstyle'
+                    steps {
+                        sh 'mvn checkstyle:checkstyle'
+                    }
                 } 
                 
             } 
